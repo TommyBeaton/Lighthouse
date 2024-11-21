@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace Kurrent.Models.Data.Pollers;
+namespace Kurrent.Models.Data.API;
 
-public class AcrResponse
+public class AcrListTagsResponse
 {
     [JsonPropertyName("registry")]
     public string Registry { get; set; }

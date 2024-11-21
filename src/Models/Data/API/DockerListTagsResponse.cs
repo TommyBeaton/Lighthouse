@@ -1,8 +1,8 @@
 using System.Text.Json.Serialization;
 
-namespace Kurrent.Models.Data.Pollers;
+namespace Kurrent.Models.Data.API;
 
-public class DockerResponse
+public class DockerListTagsResponse
 {
     [JsonPropertyName("count")]
     public long Count { get; set; }

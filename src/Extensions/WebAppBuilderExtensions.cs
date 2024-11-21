@@ -1,11 +1,13 @@
 using FluentValidation.Results;
 using Kurrent.Implementation;
+using Kurrent.Implementation.API;
 using Kurrent.Implementation.Git;
 using Kurrent.Implementation.Notifications;
 using Kurrent.Implementation.Notifications.Notifiers;
 using Kurrent.Implementation.Polling;
 using Kurrent.Implementation.Polling.Pollers;
 using Kurrent.Interfaces;
+using Kurrent.Interfaces.API;
 using Kurrent.Interfaces.Git;
 using Kurrent.Interfaces.Notifications;
 using Kurrent.Interfaces.Polling;
@@ -26,6 +28,7 @@ public static class WebAppBuilderExtensions
         RegisterNotifierFactory(builder);
         
         builder.Services.AddHostedService<PollerManager>();
+        builder.Services.AddMemoryCache();
     }
 
     private static void RegisterConfig(WebApplicationBuilder builder, IConfiguration configuration)
@@ -56,6 +59,8 @@ public static class WebAppBuilderExtensions
         builder.Services.AddTransient<IFileUpdater, FileUpdater>();
         builder.Services.AddTransient<IGitService, GitService>();
         builder.Services.AddTransient<INotificationHandler, NotificationHandler>();
+        builder.Services.AddTransient<IDockerHubWrapper, DockerHubWrapper>();
+        builder.Services.AddTransient<IAcrWrapper, AcrWrapper>();
     }
     
     private static void RegisterPollerFactory(WebApplicationBuilder builder)

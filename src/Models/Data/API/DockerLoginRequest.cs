@@ -1,3 +1,3 @@
-namespace Kurrent.Models.Data.Pollers;
+namespace Kurrent.Models.Data.API;
 
 public record DockerLoginRequest(string Username, string Password) { }
