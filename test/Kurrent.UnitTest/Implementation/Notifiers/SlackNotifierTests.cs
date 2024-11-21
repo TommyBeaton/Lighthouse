@@ -39,7 +39,7 @@ public class SlackNotifierTests
         var repositoryConfig = new RepositoryConfig { Name = "test-repo", Url = "https://github.com/test-repo" };
         var notifierConfig = new NotifierConfig { Name = "slack", Token = "test-token", Channel = "test-channel" };
 
-        var slackResponse = new SlackResponse { Ok = true };
+        var slackResponse = new SlackMessageResponse { Ok = true };
         var slackResponseString = JsonSerializer.Serialize(slackResponse);
 
         mockHttp.When("https://slack.com/api/chat.postMessage")
@@ -64,7 +64,7 @@ public class SlackNotifierTests
         var repositoryConfig = new RepositoryConfig { Name = "test-repo", Url = "https://github.com/test-repo" };
         var notifierConfig = new NotifierConfig { Name = "slack", Token = "test-token", Channel = "test-channel" };
 
-        var slackResponse = new SlackResponse { Ok = false, Error = "slack error" };
+        var slackResponse = new SlackMessageResponse { Ok = false, Error = "slack error" };
         var slackResponseString = JsonSerializer.Serialize(slackResponse);
 
         mockHttp.When("https://slack.com/api/chat.postMessage")

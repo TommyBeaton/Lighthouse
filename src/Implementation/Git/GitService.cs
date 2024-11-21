@@ -16,8 +16,6 @@ public class GitService : IGitService
     
     public Repository? CloneAndCheckout(RepositoryConfig repositoryConfig)
     {
-        Repository repo;
-        
         var cloneOptions = new CloneOptions
         {
             CredentialsProvider = GetCredentialsHandler(repositoryConfig)
@@ -27,16 +25,15 @@ public class GitService : IGitService
         {
             var localPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
             var repoPath = Repository.Clone(repositoryConfig.Url, localPath, cloneOptions);
-            repo = new Repository(repoPath);
+            var repo = new Repository(repoPath);
             Commands.Checkout(repo, repo.Branches[repositoryConfig.Branch]);
+            return repo;
         }
         catch (Exception e)
         {
             _logger.LogError(e, "Error cloning repository");
             return null;
         }
-        
-        return repo;
     }
 
     public bool CheckoutBranch(Repository repo, string branchName)

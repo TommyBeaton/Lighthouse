@@ -12,7 +12,7 @@ public abstract class BasePoller : IPoller
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
     
-    private readonly string _type;
+    protected abstract string Type { get; }
     private System.Timers.Timer _timer;
 
     protected PollerConfig? Config;
@@ -23,22 +23,20 @@ public abstract class BasePoller : IPoller
     protected BasePoller(
         ISubscriptionHandler subscriptionHandler,
         IHttpClientFactory httpClientFactory,
-        ILogger logger, 
-        string type)
+        ILogger logger)
     {
         _subscriptionHandler = subscriptionHandler;
         _httpClientFactory = httpClientFactory;
         _logger = logger;
-        _type = type;
     }
 
     public void Start(PollerConfig config, CancellationToken token)
     {
-        if (config.Type != _type)
+        if (config.Type != Type)
         {
             _logger.LogWarning("Failed to start {type} poller. Poller type is not {type}. Poller config: {poller}",
-                _type,
-                _type,
+                Type,
+                Type,
                 config);
         }
 

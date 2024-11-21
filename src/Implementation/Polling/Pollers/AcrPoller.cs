@@ -11,10 +11,12 @@ public class AcrPoller : BasePoller
 {
     private readonly ILogger<AcrPoller> _logger;
 
+    protected override string Type => KurrentStrings.Acr;
+
     public AcrPoller(
         ISubscriptionHandler subscriptionHandler,
         IHttpClientFactory httpClientFactory,
-        ILogger<AcrPoller> logger) : base(subscriptionHandler, httpClientFactory, logger, KurrentStrings.Acr)
+        ILogger<AcrPoller> logger) : base(subscriptionHandler, httpClientFactory, logger)
     {
         _logger = logger;
     }

@@ -31,7 +31,7 @@ public class SlackNotifier : BaseNotifier
         using var client = _httpClientFactory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", notifierConfig.Token);
 
-        var message = new SlackMessage
+        var message = new SlackMessageRequest
         {
             Channel = notifierConfig.Channel,
             Attachments = BuildMessage(image, repositoryConfig, commitSha)
@@ -57,7 +57,7 @@ public class SlackNotifier : BaseNotifier
         var stringResponse = await response.Content.ReadAsStringAsync();
         _logger.LogTrace("Slack response: {response}", stringResponse);
         
-        var slackResponse = JsonSerializer.Deserialize<SlackResponse>(stringResponse);
+        var slackResponse = JsonSerializer.Deserialize<SlackMessageResponse>(stringResponse);
         if (!slackResponse.Ok)
         {
             _logger.LogWarning("Failed to send slack notification: {error}", slackResponse.Error);

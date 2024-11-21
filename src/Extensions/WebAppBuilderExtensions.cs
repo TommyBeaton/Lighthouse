@@ -1,3 +1,4 @@
+using FluentValidation.Results;
 using Kurrent.Implementation;
 using Kurrent.Implementation.Git;
 using Kurrent.Implementation.Notifications;
@@ -9,7 +10,9 @@ using Kurrent.Interfaces.Git;
 using Kurrent.Interfaces.Notifications;
 using Kurrent.Interfaces.Polling;
 using Kurrent.Utils;
+using Kurrent.Utils.ConfigValidation;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Protocols.Configuration;
 
 namespace Kurrent.Extensions;
 
@@ -39,6 +42,9 @@ public static class WebAppBuilderExtensions
 
         builder.Services.Configure<AppConfig>(
             configuration.GetSection("Kurrent")
+        );
+        builder.Services.Configure<SystemConfig>(
+            configuration.GetSection("System")
         );
     }
 
@@ -108,6 +114,33 @@ public static class WebAppBuilderExtensions
             {
                 await webhookHandler.ProcessRequestAsync(context, webhook);
             }); 
+        }
+    }
+
+    public static void ValidateConfiguration(this WebApplication app)
+    {
+        var appConfigValidator = new RootConfigValidator();
+        var appConfig = app.Services.GetService<IOptions<AppConfig>>().Value ?? throw new InvalidConfigurationException("App configuration settings are missing.");
+        ValidationResult result = appConfigValidator.Validate(appConfig);
+        
+        if (!result.IsValid)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("Configuration validation failed with the following errors:");
+
+            foreach (var failure in result.Errors)
+            {
+                Console.WriteLine($"- {failure.ErrorMessage}");
+            }
+
+            Console.ResetColor();
+            Environment.Exit(1);
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Configuration validated successfully.");
+            Console.ResetColor();
         }
     }
 }

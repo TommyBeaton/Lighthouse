@@ -12,6 +12,9 @@ builder.RegisterServices(builder.Configuration);
 
 var app = builder.Build();
 
+// Validate app configuration before start up.
+app.ValidateConfiguration();
+
 app.MapHealthChecks("/health");
 
 app.UseStaticFiles();

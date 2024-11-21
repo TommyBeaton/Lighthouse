@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Kurrent.Models.Data.Notifiers;
 
-public class SlackMessage
+public class SlackMessageRequest
 {
     [JsonPropertyName("channel")]
     public string Channel { get; set; }

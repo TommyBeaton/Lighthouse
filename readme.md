@@ -42,13 +42,13 @@ Here is the `appsettings.k8s.json` configuration explained:
     - `FileExtensions`: Target file types, e.g., `.yaml`.
     - `EventSubscriptions`: Events that this repository should listen to (any event name that you have set above)
     - `Branch`: The branch to write changes to
+  
 - **Notifiers**: Storage details for Kubernetes manifests.
     - `Name`: Notifier name.
     - `Type`: Notifier type (`slack` for Slack). Slack is that is supported right now.
     - `Token`: Token to make calls to your service
     - `Channel`: Channel to send notifications to e.g. 'k8s-deployments'
     - `EventSubscriptions`: Events that this notifier should listen to (any event name that you have set above)
-
 
 ### Annotations for Auto-Updates
 

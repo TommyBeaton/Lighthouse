@@ -6,7 +6,6 @@ public class AppConfig
     public List<RepositoryConfig>? Repositories { get; set; }
     public List<PollerConfig>? Pollers { get; set; }
     public List<NotifierConfig>? Notifiers { get; set; }
-    public App? App { get; set; }
 }
 
 public class WebhookConfig
@@ -48,14 +47,12 @@ public class NotifierConfig
 {
     public string Name { get; set; }
     public string Type { get; set; }
-    public string Url { get; set; }
     public string Token { get; set; }
     public string Channel { get; set; }
     public List<string> EventSubscriptions { get; set; } = new();
 }
 
-public class App
+public class System
 {
-    public bool EnableTestEndpoints { get; set; }
-    public string TestEndpointPassword { get; set; }
+    public string Name { get; set; }
 }
