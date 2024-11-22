@@ -1,4 +1,6 @@
 using Kurrent.Extensions;
+using Kurrent.Interfaces.ExternalValidators;
+using Microsoft.IdentityModel.Protocols.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +15,7 @@ builder.RegisterServices(builder.Configuration);
 var app = builder.Build();
 
 // Validate app configuration before start up.
-app.ValidateConfiguration();
+await app.ValidateAppConfiguration();
 
 app.MapHealthChecks("/health");
 

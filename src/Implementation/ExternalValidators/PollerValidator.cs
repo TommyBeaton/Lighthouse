@@ -29,7 +29,7 @@ public class PollerValidator : IPollerValidator
         _logger = logger;
     }
     
-    public async Task<bool> IsValid(PollerConfig config)
+    public async Task<(bool, List<string>?)> Validate(PollerConfig config)
     {
         try
         {

@@ -11,13 +11,13 @@ public class RepositoryValidator : IRepositoryValidator
 
     public RepositoryValidator(
         IGitService gitService,
-        ILogger logger)
+        ILogger<RepositoryValidator> logger)
     {
         _gitService = gitService;
         _logger = logger;
     }
     
-    public async Task<bool> IsValid(RepositoryConfig config)
+    public async Task<(bool, List<string>?)> Validate(RepositoryConfig config)
     {
         var repo = _gitService.CloneAndCheckout(config);
         if (repo is null)

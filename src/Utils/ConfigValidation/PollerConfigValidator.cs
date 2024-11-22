@@ -17,14 +17,14 @@ public class PollerConfigValidator : AbstractValidator<PollerConfig>
             .WithMessage("Poller Type must be 'acr' or 'docker'.");
 
         RuleFor(p => p.IntervalInSeconds)
-            .GreaterThan(15)
-            .WithMessage("Poller IntervalInSeconds must be greater than 15.");
+            .GreaterThanOrEqualTo(15)
+            .WithMessage("Poller IntervalInSeconds must be greater than or equal to 15.");
 
         RuleFor(p => p.Url)
             .NotEmpty()
             .WithMessage("Poller Url is required.")
             .When(p => p.Type == "acr")
-            .Must(url => Uri.IsWellFormedUriString(url, UriKind.Absolute))
+            .Must(url => Uri.IsWellFormedUriString($"https://{url}", UriKind.Absolute))
             .WithMessage("Poller Url must be a valid URL.")
             .When(p => !string.IsNullOrEmpty(p.Url));
 

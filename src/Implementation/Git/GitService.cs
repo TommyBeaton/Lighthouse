@@ -18,7 +18,10 @@ public class GitService : IGitService
     {
         var cloneOptions = new CloneOptions
         {
-            CredentialsProvider = GetCredentialsHandler(repositoryConfig)
+            FetchOptions =
+            {
+                CredentialsProvider = GetCredentialsHandler(repositoryConfig)
+            }
         };
 
         try

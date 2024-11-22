@@ -1,8 +1,10 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Kurrent.Interfaces.ExternalValidators;
 using Kurrent.Models.Data.Notifiers;
 using Kurrent.Utils;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Kurrent.Implementation.ExternalValidators;
 
@@ -19,7 +21,7 @@ public class NotifierValidator : INotifierValidator
         _logger = logger;
     }
     
-    public async Task<bool> IsValid(NotifierConfig config)
+    public async Task<(bool, List<string>?)> Validate(NotifierConfig config)
     {
         try
         {
@@ -31,7 +33,7 @@ public class NotifierValidator : INotifierValidator
                 response.EnsureSuccessStatusCode();
 
                 var content = await response.Content.ReadAsStringAsync();
-                var jsonResponse = JsonSerializer.Deserialize<SlackAuthResponse>(content);
+                var jsonResponse = JsonSerializer.Deserialize<SlackAuthResponse>(content, new JsonSerializerOptions{PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
                 if (jsonResponse == null)
                 {
                     throw new JsonException("Deserialization of Slack Auth response failed.");

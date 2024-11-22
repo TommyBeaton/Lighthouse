@@ -45,7 +45,7 @@ public class DockerHubWrapper : IDockerHubWrapper
         {
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync(ct);
-            var parsedResponse = JsonSerializer.Deserialize<DockerLoginResponse>(json);
+            var parsedResponse = JsonSerializer.Deserialize<DockerLoginResponse>(json); //TODO: Check parsing options
             if (parsedResponse == null)
             {
                 _logger.LogWarning("Failed to parse response from DockerHub login for user: {username}", username);
@@ -98,7 +98,7 @@ public class DockerHubWrapper : IDockerHubWrapper
         {
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync(ct);
-            var parsedResponse = JsonSerializer.Deserialize<DockerListTagsResponse>(json);
+            var parsedResponse = JsonSerializer.Deserialize<DockerListTagsResponse>(json);  //TODO: Check parsing options
             if (parsedResponse == null)
             {
                 _logger.LogWarning("Failed to docker hub tags response for image: {image}", image);

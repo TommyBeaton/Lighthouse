@@ -1,6 +1,7 @@
 using FluentValidation.Results;
 using Kurrent.Implementation;
 using Kurrent.Implementation.API;
+using Kurrent.Implementation.ExternalValidators;
 using Kurrent.Implementation.Git;
 using Kurrent.Implementation.Notifications;
 using Kurrent.Implementation.Notifications.Notifiers;
@@ -8,6 +9,7 @@ using Kurrent.Implementation.Polling;
 using Kurrent.Implementation.Polling.Pollers;
 using Kurrent.Interfaces;
 using Kurrent.Interfaces.API;
+using Kurrent.Interfaces.ExternalValidators;
 using Kurrent.Interfaces.Git;
 using Kurrent.Interfaces.Notifications;
 using Kurrent.Interfaces.Polling;
@@ -29,6 +31,7 @@ public static class WebAppBuilderExtensions
         
         builder.Services.AddHostedService<PollerManager>();
         builder.Services.AddMemoryCache();
+        builder.Services.AddLogging();
     }
 
     private static void RegisterConfig(WebApplicationBuilder builder, IConfiguration configuration)
@@ -61,6 +64,10 @@ public static class WebAppBuilderExtensions
         builder.Services.AddTransient<INotificationHandler, NotificationHandler>();
         builder.Services.AddTransient<IDockerHubWrapper, DockerHubWrapper>();
         builder.Services.AddTransient<IAcrWrapper, AcrWrapper>();
+        builder.Services.AddTransient<IExternalValidatorService, ExternalValidatorService>();
+        builder.Services.AddTransient<IPollerValidator, PollerValidator>();
+        builder.Services.AddTransient<INotifierValidator, NotifierValidator>();
+        builder.Services.AddTransient<IRepositoryValidator, RepositoryValidator>();
     }
     
     private static void RegisterPollerFactory(WebApplicationBuilder builder)
@@ -122,16 +129,16 @@ public static class WebAppBuilderExtensions
         }
     }
 
-    public static void ValidateConfiguration(this WebApplication app)
+    public static async Task ValidateAppConfiguration(this WebApplication app)
     {
         var appConfigValidator = new RootConfigValidator();
-        var appConfig = app.Services.GetService<IOptions<AppConfig>>().Value ?? throw new InvalidConfigurationException("App configuration settings are missing.");
+        var appConfig = app.Services.GetService<IOptions<AppConfig>>()?.Value ?? throw new InvalidConfigurationException("App configuration settings are missing.");
         ValidationResult result = appConfigValidator.Validate(appConfig);
         
         if (!result.IsValid)
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Configuration validation failed with the following errors:");
+            Console.WriteLine("App Configuration validation failed with the following errors:");
 
             foreach (var failure in result.Errors)
             {
@@ -144,8 +151,11 @@ public static class WebAppBuilderExtensions
         else
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Configuration validated successfully.");
+            Console.WriteLine("App Configuration validated successfully.");
             Console.ResetColor();
         }
+        
+        var externalValidator = app.Services.GetService<IExternalValidatorService>() ?? throw new InvalidConfigurationException("Could not find external validator in DI");
+        await externalValidator.ValidateConfigAsync();
     }
 }

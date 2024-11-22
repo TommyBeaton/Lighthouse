@@ -38,7 +38,7 @@ public class AcrWrapper: IAcrWrapper
         {
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync(ct);
-            var parsedResponse = JsonSerializer.Deserialize<AcrListTagsResponse>(json);
+            var parsedResponse = JsonSerializer.Deserialize<AcrListTagsResponse>(json);  //TODO: Check parsing options
             if (parsedResponse == null)
             {
                 _logger.LogWarning("Failed to parse image tags response from acr in repo: {repoUrl}", repoUrl);
@@ -57,7 +57,7 @@ public class AcrWrapper: IAcrWrapper
     public async Task<bool> ValidateConnection(string repoUrl, string username, string password, CancellationToken ct)
     {
         var httpClient = GetAuthenticatedHttpClient(username, password);
-        var url = $"{repoUrl}/v2/_catalog";
+        var url = $"https://{repoUrl}/v2/_catalog";
         var response = await httpClient.GetAsync(url, ct);
         response.EnsureSuccessStatusCode();
 
