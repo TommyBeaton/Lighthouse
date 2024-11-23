@@ -134,6 +134,8 @@ public static class WebAppBuilderExtensions
         var appConfigValidator = new RootConfigValidator();
         var appConfig = app.Services.GetService<IOptions<AppConfig>>()?.Value ?? throw new InvalidConfigurationException("App configuration settings are missing.");
         ValidationResult result = appConfigValidator.Validate(appConfig);
+        var externalValidator = app.Services.GetService<IExternalValidatorService>() ?? throw new InvalidConfigurationException("Could not find external validator in DI");
+        var externalValidatorResult = await externalValidator.ValidateConfigAsync();
         
         if (!result.IsValid)
         {
@@ -155,7 +157,6 @@ public static class WebAppBuilderExtensions
             Console.ResetColor();
         }
         
-        var externalValidator = app.Services.GetService<IExternalValidatorService>() ?? throw new InvalidConfigurationException("Could not find external validator in DI");
-        await externalValidator.ValidateConfigAsync();
+        
     }
 }

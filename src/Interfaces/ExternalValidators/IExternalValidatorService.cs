@@ -2,5 +2,5 @@
 
 public interface IExternalValidatorService
 {
-    public Task<bool> ValidateConfigAsync();
+    public Task<(bool, List<string>?)> ValidateConfigAsync();
 }

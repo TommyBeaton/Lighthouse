@@ -23,10 +23,10 @@ public class RepositoryValidator : IRepositoryValidator
         if (repo is null)
         {
             _logger.LogError($"Failed to connect to repository '{config.Name}'");
-            return false;
+            return (false, [$"Failed to connect to repository '{config.Name}'"]);
         }
         
         _logger.LogInformation($"Successfully connected to repository '{config.Name}'.");
-        return true;
+        return (true, null);
     }
 }

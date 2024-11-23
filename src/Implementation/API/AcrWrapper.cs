@@ -38,7 +38,7 @@ public class AcrWrapper: IAcrWrapper
         {
             response.EnsureSuccessStatusCode();
             var json = await response.Content.ReadAsStringAsync(ct);
-            var parsedResponse = JsonSerializer.Deserialize<AcrListTagsResponse>(json);  //TODO: Check parsing options
+            var parsedResponse = JsonSerializer.Deserialize<AcrListTagsResponse>(json, new JsonSerializerOptions{ PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
             if (parsedResponse == null)
             {
                 _logger.LogWarning("Failed to parse image tags response from acr in repo: {repoUrl}", repoUrl);

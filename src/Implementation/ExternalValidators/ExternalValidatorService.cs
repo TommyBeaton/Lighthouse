@@ -28,7 +28,7 @@ public class ExternalValidatorService : IExternalValidatorService
         _logger = logger;
     }
     
-    public async Task<bool> ValidateConfigAsync()
+    public async Task<(bool, List<string>?)> ValidateConfigAsync()
     {
         var validationTasks = new List<Task<(bool, List<string>?)>>();
         
@@ -62,10 +62,10 @@ public class ExternalValidatorService : IExternalValidatorService
         if (results.Any(result => !result.Item1))
         {
             _logger.LogError("Some external services failed to validate. Check logs for more detials.");
-            throw new InvalidConfigurationException("App configuration to external services are invalid. Please check logs for more details.");
+            return (false, results.Where(x => x.Item2 != null).SelectMany(x => x.Item2).ToList());
         }
 
         _logger.LogInformation("All external services validated successfully.");
-        return true;
+        return (true, null);
     }
 }

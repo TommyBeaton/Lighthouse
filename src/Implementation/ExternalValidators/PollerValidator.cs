@@ -31,23 +31,28 @@ public class PollerValidator : IPollerValidator
     
     public async Task<(bool, List<string>?)> Validate(PollerConfig config)
     {
+        bool success = false;
         try
         {
             switch (config.Type)
             {
                 case KurrentStrings.Acr:
-                    return await _acrWrapper.ValidateConnection(config.Url, config.Username, config.Password, CancellationToken.None);
+                    success = await _acrWrapper.ValidateConnection(config.Url, config.Username, config.Password, CancellationToken.None);
+                    break;
                 case KurrentStrings.Docker:
-                    return await _dockerHubWrapper.ValidateConnection(config.Images, config.Username, config.Password, CancellationToken.None);
+                    success = await _dockerHubWrapper.ValidateConnection(config.Images, config.Username, config.Password, CancellationToken.None);
+                    break;
                 default:
                     _logger.LogWarning($"Poller type '{config.Type}' is not supported.");
-                    return false;
+                    return (false, [$"Poller type '{config.Type}' is not supported."]);
             }
+            List<string>? errors = success ? null : ["Poller validation failed."];
+            return (success, errors);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, $"Failed to connect to poller '{config.EventName}': {ex.Message}");
-            return false;
+            return (false, [$"Failed to connect to poller '{config.EventName}'"]);
         }
     }
 }

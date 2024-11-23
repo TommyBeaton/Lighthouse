@@ -39,7 +39,7 @@ public class NotifierValidator : INotifierValidator
                     throw new JsonException("Deserialization of Slack Auth response failed.");
                 }
                 bool success = jsonResponse.Ok;
-
+                List<string>? errors = null;
                 if (success)
                 {
                     _logger.LogInformation($"Successfully connected to Slack notifier '{config.Name}'.");
@@ -47,18 +47,22 @@ public class NotifierValidator : INotifierValidator
                 else
                 {
                     _logger.LogError($"Failed to authenticate with Slack notifier '{config.Name}'. Response: {content}");
+                    errors =
+                    [
+                        "Failed to authenticate with Slack notifier '" + config.Name + "'."
+                    ];
                 }
 
-                return success;
+                return (success, errors);
             }
 
             _logger.LogWarning($"Notifier type '{config.Type}' is not supported.");
-            return false;
+            return (false, [$"Notifier type '{config.Type}' is not supported."]);
         }
         catch (Exception ex)
         {
             _logger.LogWarning($"Failed to connect to notifier '{config.Name}': {ex.Message}");
-            return false;
+            return (false, [$"Failed to connect to notifier '{config.Name}'"]);
         }
     }
 }
